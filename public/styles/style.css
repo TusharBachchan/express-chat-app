@@ -12,3 +12,11 @@
   border-radius: 10rem;
   padding: 10px;
 }
+#chat-area {
+  max-height: 100vh;
+  min-height: 100vh;
+  background-color: #839ff1;
+}
+.chat-msg{
+
+}

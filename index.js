@@ -1,17 +1,13 @@
 const express = require("express");
-const bodyParser = require('body-parser');
-// Code for Socket.io ======
-const { createServer } = require("http");
-const { Server } = require("socket.io");
-// Code for Socket.io ======
-
 const app = express();
-const port = 3000;
 
-// Code for Socket.io ======
+const { createServer } = require("http");
 const httpServer = createServer(app);
-const io = new Server(httpServer, { /* options */ });
-// Code for Socket.io ======
+
+const bodyParser = require('body-parser');
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }))
+
 
 // set the view engine to ejs
 app.set("view engine", "ejs");
@@ -19,24 +15,32 @@ app.set("view engine", "ejs");
 // app.use(express.static('public'))
 // To create a virtual path prefix, eg: localhost:3000/static/styles/style.css
 app.use("/static", express.static("public"));
-// To access request body from the pose request made in public/js/home.js
-// app.use(express.json());
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: false }))
+
+
+// Code for Socket.io ======
+const { Server } = require("socket.io");
+const io = new Server(httpServer, { /* options */ });
+const uuid = require("uuid");
+// Code for Socket.io ======
+
+const port = 3000;
+
 // To get something from the server : Rendering index page
 app.get("/", function (req, res) {
     // use res.render to load up an ejs view file
     res.render("pages/index");
 });
 
-// To make a post request to the server
-app.post('/enter-room', (req, res) => {
-    const requestData = req.body;
-    res.json({ message: 'POST request received', data: requestData });
-    console.log(requestData)
+app.get('/generate-room-id', (req, res) => {
+    let roomId = uuid.v4();
+    res.status(200).send(roomId)
+});
 
+app.get('/chat', (req, res) => {
+    res.render("pages/chat");
 })
 
-app.listen(port, () => {
+
+httpServer.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
 });
